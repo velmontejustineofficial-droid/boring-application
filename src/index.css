@@ -1,0 +1,27 @@
+:root {
+  /* 60% - Dominant (Deep Dark Blue Background) */
+  --bg-main: #0F172A;        
+  --text-main: #F8FAFC;  
+  --text-secondary: #94A3B8;
+  --gradient-app-title: linear-gradient(135deg, #c084fc 0%, #38bdf8 100%);    
+
+  /* 30% - Secondary (Card / Surface / Containers) */
+  --bg-surface: #1E293B;     
+  --border-color: #334155;   
+
+  /* 10% - Accent (Primary Buttons / Active Highlights) */
+  --color-accent: #38BDF8;   /* Bright Cyan */
+  --color-accent-hover: #7DD3FC;
+  --text-accent: #0F172A;    /* Dark text sa loob ng bright button */
+
+  /* Shadows suited for Dark Mode */
+  --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  --shadow-accent: 0 0 15px rgba(56, 189, 248, 0.3);
+  --shadow-hover: 0 10px 20px -3px rgba(56, 189, 248, 0.4);
+}
+
+body {
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  margin: 0;
+}

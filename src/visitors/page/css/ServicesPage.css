@@ -1,0 +1,68 @@
+.services-page-container {
+    width: 100%;
+    padding-bottom: 4rem;
+}
+
+/* Grid Container para sa Cards */
+.services-grid-container {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.5rem;
+    padding: 0 1.5rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+/* Indibidwal na Service Card */
+.service-card {
+    background-color: var(--bg-surface);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 2rem;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.service-card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--shadow-sm);
+}
+
+.service-card-icon {
+    font-size: 2.5rem;
+    color: var(--color-accent);
+    margin-bottom: 1rem;
+}
+
+.service-card h3 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-main, #1e293b);
+}
+
+.service-card p {
+    font-size: 0.95rem;
+    color: var(--text-secondary, #64748b);
+    line-height: 1.6;
+    margin: 0;
+}
+
+/* Responsive para sa Tablet at Desktop */
+@media (min-width: 768px) {
+    .services-grid-container {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 0 2rem;
+    }
+}
+
+@media (min-width: 1024px) {
+    .services-grid-container {
+        grid-template-columns: repeat(3, 1fr);
+        padding: 0 3rem;
+    }
+    
+    .service-card {
+        text-align: left;
+    }
+}
