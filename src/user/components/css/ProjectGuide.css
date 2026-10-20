@@ -1,0 +1,178 @@
+@import '../../../app/style/user.css';
+
+.project-guide {
+  min-height: 100vh;
+  background: var(--bg-main);
+  color: var(--text-primary);
+}
+
+.guide-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 20px;
+  padding: 20px 5%;
+  border-bottom: 1px solid var(--border-color);
+  background: var(--bg-surface);
+}
+
+.guide-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.guide-brand > svg {
+  color: var(--primary-color);
+}
+
+.guide-brand h1 {
+  margin: 0 0 4px;
+  font-size: 20px;
+}
+
+.guide-brand p {
+  margin: 0;
+  color: var(--text-muted);
+  font-size: 12px;
+}
+
+.guide-github-link,
+.guide-empty a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 10px 14px;
+  color: var(--text-primary);
+  text-decoration: none;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.guide-github-link:hover,
+.guide-empty a:hover {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.guide-content {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 36px 24px 60px;
+}
+
+.markdown-content {
+  padding: clamp(20px, 4vw, 40px);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  overflow-wrap: anywhere;
+  line-height: 1.8;
+}
+
+.markdown-content h1,
+.markdown-content h2,
+.markdown-content h3 {
+  line-height: 1.4;
+  margin-top: 1.5em;
+}
+
+.markdown-content h1:first-child,
+.markdown-content h2:first-child {
+  margin-top: 0;
+}
+
+.markdown-content p,
+.markdown-content li {
+  color: var(--text-secondary);
+}
+
+.markdown-content a {
+  color: var(--primary-color);
+}
+
+.markdown-content img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+.markdown-content pre {
+  padding: 16px;
+  overflow-x: auto;
+  background: var(--bg-main);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+}
+
+.markdown-content code {
+  font-family: monospace;
+  overflow-wrap: anywhere;
+}
+
+.markdown-content :not(pre) > code {
+  padding: 3px 6px;
+  background: var(--bg-elevated);
+  border-radius: 4px;
+}
+
+.markdown-content table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+  border-collapse: collapse;
+}
+
+.markdown-content th,
+.markdown-content td {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  text-align: left;
+}
+
+.guide-message {
+  color: var(--text-secondary);
+}
+
+.guide-empty {
+  padding: 60px 24px;
+  text-align: center;
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+}
+
+.guide-empty > svg {
+  color: var(--primary-color);
+}
+
+.guide-empty h2 {
+  margin: 18px 0 10px;
+}
+
+.guide-empty p {
+  max-width: 540px;
+  margin: 0 auto 22px;
+  color: var(--text-secondary);
+  line-height: 1.7;
+}
+
+@media (max-width: 600px) {
+  .guide-header {
+    padding: 16px;
+  }
+
+  .guide-brand h1 {
+    font-size: 17px;
+  }
+
+  .guide-github-link {
+    padding: 9px;
+    font-size: 12px;
+  }
+
+  .guide-content {
+    padding: 20px 12px;
+  }
+}

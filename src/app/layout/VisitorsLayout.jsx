@@ -2,8 +2,8 @@ import './css/layout.css';
 
 import { Outlet } from "react-router"
 
-import VisitorsHeader from "../components/VisitorsHeader";
-import VisitorsFooter from "../components/VisitorsFooter";
+import VisitorsHeader from "./components/visitor/VisitorsHeader";
+import VisitorsFooter from "./components/visitor/VisitorsFooter";
 
 export default function VisitorsLayout() {
   return (

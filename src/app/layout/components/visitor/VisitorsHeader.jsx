@@ -4,28 +4,28 @@ import { NavLink } from 'react-router';
 export default function VisitorsHeader({ title, logo}) {
   return (
     <header className='vistors-header'>
-        <NavLink to="/" className='vistors-logo'>
+        <NavLink to="/visitors" className='vistors-logo'>
             <img src={logo} alt="" />
             <h1>{title}</h1>
         </NavLink>
         <nav className='vistors-navigation'>
           <NavLink 
-            to="/about" 
+            to="about" 
             className={({ isActive }) => isActive ? 'active-link': 'none'}>
             about
           </NavLink>
           <NavLink 
-            to="/tools" 
+            to="tools" 
             className={({ isActive }) => isActive ? 'active-link': 'none'}>
             tools
           </NavLink>
           <NavLink 
-            to="/projects" 
+            to="projects" 
             className={({ isActive }) => isActive ? 'active-link': 'none'}>
             projects
           </NavLink>
           <NavLink 
-            to="/blog" 
+            to="blog" 
             className={({ isActive }) => isActive ? 'active-link': 'none'}>
             blog
           </NavLink>

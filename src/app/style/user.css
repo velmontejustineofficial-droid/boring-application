@@ -1,0 +1,42 @@
+:root {
+  /* Background Colors */
+  --bg-main: #080F1A;
+  --bg-surface: #0D1726;
+  --bg-card: #111D2E;
+  --bg-elevated: #19273B;
+
+  /* Brand Colors */
+  --primary-color: #00D6A0;
+  --primary-hover: #00F0B5;
+  --primary-soft: #103B38;
+
+  /* Text Colors */
+  --text-primary: #E8F0FA;
+  --text-secondary: #A5B8D0;
+  --text-muted: #7488A8;
+
+  /* Border Colors */
+  --border-color: #23344A;
+  --border-hover: #36516F;
+
+  /* Status Colors */
+  --success-color: #22C55E;
+  --warning-color: #FBBF24;
+  --danger-color: #FB7185;
+  --info-color: #3B82F6;
+
+  /* Icon Colors */
+  --icon-blue: #3B82F6;
+  --icon-purple: #8B5CF6;
+  --icon-green: #00D6A0;
+  --icon-yellow: #FBBF24;
+  --icon-pink: #FB7185;
+
+  /* Buttons */
+  --button-primary-bg: #00D6A0;
+  --button-primary-text: #04130F;
+  --button-primary-hover: #00F0B5;
+
+  /* Shadows */
+  --shadow-card: 0 4px 16px rgba(0, 0, 0, 0.2);
+}
