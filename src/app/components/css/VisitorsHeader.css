@@ -121,7 +121,6 @@ a {
 @media (min-width: 1440px) {
     .vistors-header {
         height: 90px;
-        max-width: 1400px;
         margin: 0 auto;
     }
     .vistors-logo {
