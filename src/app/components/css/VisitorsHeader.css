@@ -73,11 +73,6 @@ a {
         text-decoration-color: var(--color-accent);
     }
 }
-
-@media (min-width: 600px){
-    
-}
-
 /* --- TABLETS & SMALL LAPTOPS (600px and up) --- */
 @media (min-width: 600px) {
     .vistors-header {
