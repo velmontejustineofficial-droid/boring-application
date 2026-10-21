@@ -5,7 +5,7 @@ import {
   Grid2X2,
   UserRound,
   Settings,
-  Code2,
+  Code2
 } from 'lucide-react';
 
 import './css/UserSidebar.css';

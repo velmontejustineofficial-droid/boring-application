@@ -37,7 +37,7 @@ export default function AboutPage() {
       <section className="about-hero">
         <span className="about-eyebrow">
           <Code2 size={16} />
-          ABOUT JUSTINEBON
+          ABOUT BORING APP
         </span>
 
         <h1>
@@ -46,7 +46,7 @@ export default function AboutPage() {
         </h1>
 
         <p className="about-hero-description">
-          JustineBon is a platform for showcasing applications,
+          Boring is a platform for showcasing applications,
           developer tools, and software projects in one place.
           Explore projects, learn how they work, and discover
           resources that inspire your next idea.

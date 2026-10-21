@@ -9,7 +9,7 @@ export default function UserHeader() {
     <header className="user-header">
       <div className="user-header-brand">
         <h1>
-          JustineBon<span>.</span>
+          Boring<span>.</span>
         </h1>
       </div>
 
@@ -24,7 +24,7 @@ export default function UserHeader() {
         </NavLink>
 
         <NavLink
-          to="/profile"
+          to="/user/profile"
           className="user-header-link"
           aria-label="Profile"
         >

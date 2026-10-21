@@ -1,126 +1,109 @@
+
 import { useState } from 'react';
 import { Link } from 'react-router';
-import {
-  Eye,
-  EyeOff,
-  Mail,
-  LockKeyhole,
-  ArrowRight,
-  Layers3,
-} from 'lucide-react';
+import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { FiGithub } from 'react-icons/fi';
 
-import './css/AuthPages.css';
+import './css/LoginPage.css';
 
-export default function LoginPage() {
+export default function LoginPage({login}) {
+
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
 
-  function handleLogin(event) {
+  async function handleSubmit(event) {
     event.preventDefault();
+    setError('');
 
-    // Connect your authentication API here.
-    console.log('Login form submitted');
+    try {
+      // This expects login() to be connected to your
+      // actual authentication service.
+      await login({ email, password });
+    } catch (err) {
+      setError(err.message || 'Unable to sign in. Please try again.');
+    }
   }
 
   return (
-    <main className="auth-page">
-      <section className="auth-card">
-        <Link to="/" className="auth-brand">
-          JustineBon<span>.</span>
+    <main className="login-page">
+      <section className="login-container">
+        <Link to="/" className="login-brand">
+          <div className="login-brand-logo">JB</div>
+          <h1>
+            Bor<span>ing.</span>
+          </h1>
+          <p>Build · Share · Grow</p>
         </Link>
 
-        <div className="auth-icon">
-          <Layers3 size={28} />
-        </div>
-
-        <div className="auth-heading">
-          <h1>Welcome back</h1>
-          <p>Sign in to explore your workspace and community.</p>
-        </div>
-
-        <form className="auth-form" onSubmit={handleLogin}>
-          <div className="auth-field">
-            <label htmlFor="login-email">Email address</label>
-
-            <div className="auth-input-wrapper">
-              <Mail size={18} />
-
-              <input
-                id="login-email"
-                type="email"
-                name="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                required
-              />
-            </div>
-          </div>
-
-          <div className="auth-field">
-            <div className="auth-label-row">
-              <label htmlFor="login-password">Password</label>
-
-              <Link to="/forgot-password" className="auth-text-link">
-                Forgot password?
-              </Link>
-            </div>
-
-            <div className="auth-input-wrapper">
-              <LockKeyhole size={18} />
-
-              <input
-                id="login-password"
-                type={showPassword ? 'text' : 'password'}
-                name="password"
-                placeholder="Enter your password"
-                autoComplete="current-password"
-                required
-              />
-
-              <button
-                type="button"
-                className="auth-password-toggle"
-                onClick={() => setShowPassword(!showPassword)}
-                aria-label={
-                  showPassword ? 'Hide password' : 'Show password'
-                }
-              >
-                {showPassword ? (
-                  <EyeOff size={18} />
-                ) : (
-                  <Eye size={18} />
-                )}
-              </button>
-            </div>
-          </div>
-
-          <label className="auth-checkbox">
-            <input type="checkbox" name="remember" />
-            <span>Remember me</span>
+        <form className="login-form" onSubmit={handleSubmit}>
+          <label className="login-input">
+            <Mail size={19} />
+            <input
+              type="email"
+              placeholder="Email address"
+              aria-label="Email address"
+              autoComplete="username"
+              value={email}
+              onChange={(event) => setEmail(event.target.value)}
+              required
+            />
           </label>
 
-          <button type="submit" className="auth-submit-button">
-            Sign In
-            <ArrowRight size={18} />
-          </button>
-          <div className="auth-visitor-link">
-            <Link to="/visitors">← Continue as Visitor</Link>
+          <label className="login-input">
+            <Lock size={19} />
+            <input
+              type={showPassword ? 'text' : 'password'}
+              placeholder="Password"
+              aria-label="Password"
+              autoComplete="current-password"
+              value={password}
+              onChange={(event) => setPassword(event.target.value)}
+              required
+            />
+            <button
+              type="button"
+              className="password-toggle"
+              onClick={() => setShowPassword((previous) => !previous)}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
+            >
+              {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
+            </button>
+          </label>
+
+          {error && <p className="login-error" role="alert">{error}</p>}
+
+          <div className="login-options">
+            <Link to="/forgot-password">Forgot password?</Link>
           </div>
+
+          <button type="submit" className="login-submit">
+            Sign In <span aria-hidden="true">→</span>
+          </button>
+
+          <Link to="/visitors" className="visitor-button">
+            Continue as Visitor
+          </Link>
         </form>
 
-        <div className="auth-divider">
-          <span>NEW TO JUSTINEBON?</span>
+        <div className="login-divider">
+          <span />
+          <p>or continue with</p>
+          <span />
         </div>
 
-        <p className="auth-switch-text">
-          Don't have an account?{' '}
-          <Link to="/create-account" className="auth-text-link">
-            Create account
-          </Link>
-        </p>
+        <div className="login-socials">
+          <button type="button" className="social-button" onClick={handleSubmit}>
+            <FiGithub size={19} />
+            GitHub
+          </button>
 
-        <p className="auth-footer">
-          Discover tools, share projects, and connect with creators.
-        </p>
+          <button type="button" className="social-button">
+            <span className="google-letter">G</span>
+            Google
+          </button>
+        </div>
       </section>
     </main>
   );

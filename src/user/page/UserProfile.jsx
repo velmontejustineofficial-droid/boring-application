@@ -1,10 +1,15 @@
 
 import { useState } from 'react';
-import { UserRound, Mail, Save } from 'lucide-react';
-
+import { useOutletContext } from "react-router";
+import { Mail, Save } from 'lucide-react';
 import './css/UserPages.css';
 
+import useAuth from '../../app/service/AuthSevice';
+
 export default function UserProfile() {
+  const { user } = useOutletContext();
+  const { logout } = useAuth();
+
   const [profile, setProfile] = useState({
     name: 'John Doe',
     email: 'john@example.com',
@@ -38,11 +43,11 @@ export default function UserProfile() {
       <div className="profile-layout">
         <aside className="profile-summary page-panel">
           <div className="profile-avatar">
-            <UserRound size={48} />
+            <img src={user.user_metadata.avatar_url} alt="" />
           </div>
 
-          <h2>{profile.name || 'Your Name'}</h2>
-          <p className="profile-username">@{profile.username}</p>
+          <h2>{user.user_metadata.name}</h2>
+          <p className="profile-username">@{user.user_metadata.preferred_username}</p>
 
           <span className="profile-role">User</span>
 
@@ -50,7 +55,7 @@ export default function UserProfile() {
 
           <div className="profile-email">
             <Mail size={17} />
-            <span>{profile.email}</span>
+            <span>{user.email}</span>
           </div>
         </aside>
 
@@ -106,6 +111,14 @@ export default function UserProfile() {
             Save Changes
           </button>
         </form>
+        <a href="/visitors">
+          visit other project
+        </a>
+        <button onClick={
+          ()=>{
+              logout();
+          }
+        }>lag out</button>
       </div>
     </section>
   );

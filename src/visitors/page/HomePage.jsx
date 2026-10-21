@@ -21,7 +21,7 @@ export default function HomePage() {
           and Java desktop applications in one place.
         </p>
     
-        <button className="hero-button" onClick={()=> navigateTo('/')}>
+        <button className="hero-button" onClick={()=> navigateTo('/user')}>
           Shared My Projects
         </button>
       </div>
