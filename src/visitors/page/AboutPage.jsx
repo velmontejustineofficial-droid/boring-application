@@ -189,7 +189,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <a href="/user/systems" className="about-primary-button">
+        <a href="/visitors/projects" className="about-primary-button">
           Explore Systems
           <ArrowRight size={18} />
         </a>
