@@ -1,4 +1,4 @@
-
+import { NavLink } from 'react-router';
 import {
   Code2,
   Globe,
@@ -189,10 +189,10 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <a href="/visitors/projects" className="about-primary-button">
+        <NavLink to="/visitors/projects" className="about-primary-button">
           Explore Systems
           <ArrowRight size={18} />
-        </a>
+        </NavLink>
       </section>
     </main>
   );
