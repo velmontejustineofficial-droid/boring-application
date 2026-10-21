@@ -1,14 +1,5 @@
 import { NavLink } from 'react-router';
-import {
-  Code2,
-  Globe,
-  Monitor,
-  BookOpen,
-  Rocket,
-  Target,
-  Heart,
-  ArrowRight,
-} from 'lucide-react';
+import { Code2, Globe, Monitor,BookOpen, Rocket, Target, Heart, ArrowRight, } from 'lucide-react';
 
 import './css/AboutPage.css';
 

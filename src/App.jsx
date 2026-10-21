@@ -6,6 +6,7 @@ import UserLayout from "./app/layout/UserLayout";
 import AuthLayout from "./app/layout/AuthLayout";
 
 import NotFoundPage from "./app/pages/NotFoundPage";
+import NotAvailable from "./app/pages/NotAvailable";
 
 import { HomePage, AboutPage, ProjectsPage, BlogPage, ContactPage, ServicesPage, ToolsPage } from "./app/pages/VisitorsPage";
 import { AdminDashboard } from "./app/pages/AdminPage";
@@ -26,7 +27,7 @@ export default function App() {
         <Route path={'about'} element={<AboutPage/>} />
         <Route path={'tools'} element={<ToolsPage/>} />
         <Route path={'projects'} element={<ProjectsPage/>} />
-        <Route path={'blog'} element={<BlogPage/>} />
+        <Route path={'blog'} element={<NotAvailable/>} />
       </Route>
 
       <Route path="/user" element={<UserLayout/>}>
