@@ -1,4 +1,5 @@
-import { useMemo, useState } from 'react';
+
+import { useEffect, useMemo, useState } from 'react';
 import {
   Search,
   Wrench,
@@ -15,92 +16,7 @@ import {
 
 import './css/ToolsPage.css';
 
-const tools = [
-  {
-    id: 1,
-    name: 'JSON Formatter',
-    description:
-      'Format, validate, and organize JSON data with a simple and easy-to-use interface.',
-    category: 'Developer Tools',
-    type: 'Web Tool',
-    language: 'JavaScript',
-    author: 'Alex Developer',
-    date: 'Oct 18, 2026',
-    technologies: ['JavaScript', 'HTML', 'CSS'],
-    demo: 'https://jsonformatter.org/',
-    github: 'https://github.com/',
-  },
-  {
-    id: 2,
-    name: 'Email Service',
-    description:
-      'A web-based email tool designed to help users manage and organize email-related tasks.',
-    category: 'Web Tools',
-    type: 'Web Tool',
-    language: 'PHP',
-    author: 'Jamie Santos',
-    date: 'Oct 17, 2026',
-    technologies: ['PHP', 'MySQL', 'JavaScript'],
-    demo: '',
-    github: 'https://github.com/',
-  },
-  {
-    id: 3,
-    name: 'Java Utility Library',
-    description:
-      'A reusable Java library containing helper methods for common programming tasks.',
-    category: 'Libraries',
-    type: 'Java Library',
-    language: 'Java',
-    author: 'Chris Rivera',
-    date: 'Oct 16, 2026',
-    technologies: ['Java', 'Maven'],
-    demo: '',
-    github: 'https://github.com/',
-  },
-  {
-    id: 4,
-    name: 'Color Palette Generator',
-    description:
-      'Generate color combinations for websites, applications, and creative projects.',
-    category: 'Design Tools',
-    type: 'Web Tool',
-    language: 'JavaScript',
-    author: 'Taylor Dev',
-    date: 'Oct 15, 2026',
-    technologies: ['JavaScript', 'CSS', 'HTML'],
-    demo: '',
-    github: 'https://github.com/',
-  },
-  {
-    id: 5,
-    name: 'File Organizer',
-    description:
-      'A desktop utility that helps organize files into folders based on their file types.',
-    category: 'Desktop Tools',
-    type: 'Desktop App',
-    language: 'Java',
-    author: 'Morgan Lee',
-    date: 'Oct 14, 2026',
-    technologies: ['Java', 'Swing'],
-    demo: '',
-    github: 'https://github.com/',
-  },
-  {
-    id: 6,
-    name: 'Password Generator',
-    description:
-      'Generate random passwords with customizable length and character options.',
-    category: 'Developer Tools',
-    type: 'Web Tool',
-    language: 'JavaScript',
-    author: 'Jordan Cruz',
-    date: 'Oct 12, 2026',
-    technologies: ['JavaScript', 'HTML', 'CSS'],
-    demo: '',
-    github: 'https://github.com/',
-  },
-];
+const API_URL = 'https://boring-api.onrender.com/api/test/tools';
 
 const categories = [
   'All Tools',
@@ -112,9 +28,53 @@ const categories = [
 ];
 
 export default function ToolsPage() {
+  const [tools, setTools] = useState([]);
   const [search, setSearch] = useState('');
   const [activeCategory, setActiveCategory] = useState('All Tools');
   const [selectedTool, setSelectedTool] = useState(null);
+
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    const controller = new AbortController();
+
+    async function fetchTools() {
+      try {
+        setLoading(true);
+        setError('');
+
+        const response = await fetch(API_URL, {
+          signal: controller.signal,
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (!Array.isArray(data)) {
+          throw new Error('Invalid API response. Expected a JSON array.');
+        }
+
+        setTools(data);
+      } catch (err) {
+        if (err.name !== 'AbortError') {
+          console.error('Failed to fetch tools:', err);
+          setError(err.message || 'Failed to load tools.');
+        }
+      } finally {
+        if (!controller.signal.aborted) {
+          setLoading(false);
+        }
+      }
+    }
+
+    fetchTools();
+
+    return () => controller.abort();
+  }, []);
 
   const filteredTools = useMemo(() => {
     const query = search.toLowerCase().trim();
@@ -130,14 +90,17 @@ export default function ToolsPage() {
         tool.author,
         tool.language,
         tool.category,
-        ...tool.technologies,
+        ...(Array.isArray(tool.technologies)
+          ? tool.technologies
+          : []),
       ]
+        .filter(Boolean)
         .join(' ')
         .toLowerCase();
 
       return matchesCategory && searchableText.includes(query);
     });
-  }, [search, activeCategory]);
+  }, [tools, search, activeCategory]);
 
   return (
     <main className="tools-page">
@@ -198,9 +161,7 @@ export default function ToolsPage() {
             <button
               type="button"
               key={category}
-              className={
-                activeCategory === category ? 'active' : ''
-              }
+              className={activeCategory === category ? 'active' : ''}
               onClick={() => setActiveCategory(category)}
             >
               {category}
@@ -212,12 +173,25 @@ export default function ToolsPage() {
       <section className="tools-results">
         <div className="tools-results-heading">
           <h2>Explore Tools</h2>
-          <span>
-            Shared by community creators
-          </span>
+          <span>Shared by community creators</span>
         </div>
 
-        {filteredTools.length > 0 ? (
+        {loading ? (
+          <div className="tools-empty-state">
+            <p>Loading community tools...</p>
+          </div>
+        ) : error ? (
+          <div className="tools-empty-state">
+            <h3>Unable to load tools</h3>
+            <p>{error}</p>
+            <button
+              type="button"
+              onClick={() => window.location.reload()}
+            >
+              Try Again
+            </button>
+          </div>
+        ) : filteredTools.length > 0 ? (
           <div className="tools-grid">
             {filteredTools.map((tool) => (
               <article className="community-tool-card" key={tool.id}>
@@ -245,11 +219,10 @@ export default function ToolsPage() {
                   </span>
 
                   <h3>{tool.name}</h3>
-
                   <p>{tool.description}</p>
 
                   <div className="community-tool-tags">
-                    {tool.technologies.map((technology) => (
+                    {(tool.technologies || []).map((technology) => (
                       <span key={technology}>{technology}</span>
                     ))}
                   </div>
@@ -301,7 +274,7 @@ export default function ToolsPage() {
                       rel="noopener noreferrer"
                       aria-label={`View ${tool.name} source code`}
                     >
-                      {/* <Github size={17} /> */}
+                      <Code2 size={17} />
                     </a>
                   )}
                 </div>
@@ -361,6 +334,7 @@ export default function ToolsPage() {
             </span>
 
             <h2 id="tool-modal-title">{selectedTool.name}</h2>
+
             <p className="tool-modal-description">
               {selectedTool.description}
             </p>
@@ -390,7 +364,7 @@ export default function ToolsPage() {
             <h3 className="tool-modal-subheading">Technologies</h3>
 
             <div className="community-tool-tags">
-              {selectedTool.technologies.map((technology) => (
+              {(selectedTool.technologies || []).map((technology) => (
                 <span key={technology}>{technology}</span>
               ))}
             </div>
@@ -415,7 +389,7 @@ export default function ToolsPage() {
                   rel="noopener noreferrer"
                   className="tool-modal-link"
                 >
-                  {/* <Github size={17} /> */}
+                  <Code2 size={17} />
                   Source Code
                 </a>
               )}

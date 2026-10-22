@@ -21,6 +21,7 @@ export default function LoginPage({login}) {
       // This expects login() to be connected to your
       // actual authentication service.
       await login({ email, password });
+      
     } catch (err) {
       setError(err.message || 'Unable to sign in. Please try again.');
     }
