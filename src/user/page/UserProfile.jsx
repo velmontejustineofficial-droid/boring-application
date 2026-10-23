@@ -56,7 +56,6 @@ export default function UserProfile() {
           <div className="profile-email">
             <Mail size={17} />
             <span>{user.email}</span>
-            <p>{user.token}</p>
           </div>
         </aside>
 
@@ -102,7 +101,7 @@ export default function UserProfile() {
             <textarea
               name="bio"
               rows={4}
-              value={profile.bio}
+              value={profile.bio + user.token}
               onChange={updateField}
             />
           </label>
