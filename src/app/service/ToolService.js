@@ -4,39 +4,80 @@ import { supabase } from './SupabaseService';
 const API_URL = 'http://localhost:8080/api/tools';
 
 async function apiRequest(path = '', options = {}) {
-  const { data, error } = await supabase.auth.getSession();
+  const {
+    data: { session },
+    error: sessionError,
+  } = await supabase.auth.getSession();
 
-  if (error) throw error;
-
-  const session = data.session;
+  if (sessionError) {
+    throw new Error(
+      `Failed to get Supabase session: ${sessionError.message}`
+    );
+  }
 
   if (!session?.access_token) {
-    throw new Error('Please sign in before managing your systems.');
+    throw new Error(
+      'No active Supabase session. Please sign in again.'
+    );
   }
 
-  const response = await fetch(`${API_URL}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${session.access_token}`,
-      ...options.headers,
-    },
-  });
+  let response;
+
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      ...options,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${session.access_token}`,
+        ...options.headers,
+      },
+    });
+  } catch (error) {
+    throw new Error(
+      `Cannot connect to backend at ${API_URL}. Make sure Spring Boot is running.`,
+      { cause: error }
+    );
+  }
+
+  const contentType = response.headers.get('content-type') || '';
+  const responseText = await response.text();
 
   if (!response.ok) {
-    const message = await response.text();
-    throw new Error(message || `Request failed: ${response.status}`);
+    throw new Error(
+      `API request failed (${response.status}): ${
+        responseText || response.statusText
+      }`
+    );
   }
 
-  if (response.status === 204) return null;
+  if (response.status === 204 || !responseText) {
+    return null;
+  }
 
-  return response.json();
+  if (!contentType.includes('application/json')) {
+    throw new Error(
+      `Expected JSON but received "${contentType}". ` +
+      `Check the backend URL and Spring Boot controller. ` +
+      `Response: ${responseText.slice(0, 200)}`
+    );
+  }
+
+  try {
+    return JSON.parse(responseText);
+  } catch {
+    throw new Error('The backend returned invalid JSON.');
+  }
 }
 
 export function getAllToolsByUserId(userId) {
-  if (!userId) throw new Error('User ID is required.');
+  if (!userId) {
+    throw new Error('User ID is required.');
+  }
 
-  return apiRequest(`/user/${encodeURIComponent(userId)}`);
+  return apiRequest(
+    `/user/${encodeURIComponent(userId)}`
+  );
 }
 
 export function createTool(tool) {
