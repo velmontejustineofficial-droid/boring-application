@@ -102,7 +102,7 @@ export default function UserProfile() {
             <textarea
               name="bio"
               rows={4}
-              value={profile.bio + user.token}
+              value={profile.bio}
               onChange={updateField}
             />
           </label>
