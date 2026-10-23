@@ -3,6 +3,7 @@ import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router";
 
 const ToolsTestPage = lazy(()=> import("./user/TestPage"));
+import UserPageTest from "./user/page/UserPageTest";
 
 // Layouts
 const VisitorsLayout = lazy(() => import("./app/layout/VisitorsLayout"));
@@ -113,7 +114,9 @@ export default function App() {
           <Route path="blog" element={<NotAvailable />} />
         </Route>
 
-        <Route path="/user" element={<UserLayout />}>
+        
+        <Route path="/user" element={<UserPageTest />}/>
+        <Route path="/lock" element={<UserLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
 
           <Route path="dashboard" element={<UserDashboard />} />
