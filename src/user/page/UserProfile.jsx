@@ -3,12 +3,13 @@ import { useState } from 'react';
 import { useOutletContext } from "react-router";
 import { Mail, Save } from 'lucide-react';
 import './css/UserPages.css';
-
-import useAuth from '../../app/service/AuthSevice';
+import { useNavigate } from 'react-router';
+import { logoutSupabase } from '../../app/service/SupabaseService';
 
 export default function UserProfile() {
   const { user } = useOutletContext();
-  const { logout } = useAuth();
+  const navigate = useNavigate();
+
 
   const [profile, setProfile] = useState({
     name: 'John Doe',
@@ -115,8 +116,9 @@ export default function UserProfile() {
           visit other project
         </a>
         <button onClick={
-          ()=>{
-              logout();
+          async ()=>{
+              await logoutSupabase();
+              navigate('/login', { replace: true });
           }
         }>lag out</button>
       </div>
