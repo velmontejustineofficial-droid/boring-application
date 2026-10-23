@@ -1,5 +1,5 @@
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Search,
   Mail,
@@ -17,33 +17,10 @@ import {
   Save,
 } from 'lucide-react';
 
-import './css/UserPages.css';
+import { supabase } from '../../app/service/SupabaseService';
+import { createTool, getAllToolsByUserId } from '../../app/service/ToolService';
 
-const initialSystems = [
-  {
-    id: 1,
-    name: 'Email Service',
-    description: 'A simple and reliable email service.',
-    category: 'Web App',
-    language: 'PHP',
-    icon: 'Mail',
-    github:
-      'https://github.com/velmontejustineofficial-droid/boring-application/',
-    readmePath: 'README.md',
-    branch: 'main',
-  },
-  {
-    id: 2,
-    name: 'Library System',
-    description: 'Manage books, members, and borrowing records.',
-    category: 'Web App',
-    language: 'JavaScript',
-    icon: 'BookOpen',
-    github: '',
-    readmePath: 'README.md',
-    branch: 'main',
-  },
-];
+import './css/UserPages.css';
 
 const categories = [
   'All',
@@ -97,30 +74,99 @@ function getGitHubRepository(value) {
   }
 }
 
+function mapToolToSystem(tool) {
+  return {
+    ...tool,
+    icon: tool.icon || 'Code2',
+    github: tool.github || '',
+    readmePath: tool.readmePath || 'README.md',
+    branch: tool.branch || 'main',
+  };
+}
+
 export default function MySystems() {
-  const [systems, setSystems] = useState(initialSystems);
+  const [systems, setSystems] = useState([]);
+
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('All');
 
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
-  const [form, setForm] = useState(emptyProject);
-  const [formError, setFormError] = useState('');
+  const [form, setForm] = useState({ ...emptyProject });
 
+  const [formError, setFormError] = useState('');
+  const [pageError, setPageError] = useState('');
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
+
+  // GET ALL TOOLS BY CURRENT USER ID
+  useEffect(() => {
+    let cancelled = false;
+
+    async function loadSystems() {
+      setLoading(true);
+      setPageError('');
+
+      try {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+
+        if (error) throw error;
+
+        if (!session?.user?.id) {
+          throw new Error(
+            'Please sign in to view your systems.'
+          );
+        }
+
+        const tools = await getAllToolsByUserId(
+          session.user.id
+        );
+
+        if (cancelled) return;
+
+        setSystems(
+          tools.map(mapToolToSystem)
+        );
+      } catch (error) {
+        if (!cancelled) {
+          setPageError(
+            error.message || 'Failed to load your systems.'
+          );
+        }
+      } finally {
+        if (!cancelled) {
+          setLoading(false);
+        }
+      }
+    }
+
+    loadSystems();
+
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  // SEARCH AND CATEGORY FILTER
   const filteredSystems = systems.filter((system) => {
     const query = search.toLowerCase();
 
     const matchesSearch =
-      system.name.toLowerCase().includes(query) ||
-      system.description.toLowerCase().includes(query) ||
-      system.language.toLowerCase().includes(query);
+      (system.name || '').toLowerCase().includes(query) ||
+      (system.description || '').toLowerCase().includes(query) ||
+      (system.language || '').toLowerCase().includes(query);
 
     const matchesCategory =
-      category === 'All' || system.category === category;
+      category === 'All' ||
+      system.category === category;
 
     return matchesSearch && matchesCategory;
   });
 
+  // OPEN CREATE FORM
   function openCreateForm() {
     setEditingId(null);
     setForm({ ...emptyProject });
@@ -128,28 +174,36 @@ export default function MySystems() {
     setShowForm(true);
   }
 
+  // OPEN EDIT FORM
   function openEditForm(system) {
     setEditingId(system.id);
+
     setForm({
-      name: system.name,
-      description: system.description,
-      category: system.category,
-      language: system.language,
-      icon: system.icon,
+      name: system.name || '',
+      description: system.description || '',
+      category: system.category || 'Web App',
+      language: system.language || 'JavaScript',
+      icon: system.icon || 'Code2',
       github: system.github || '',
       readmePath: system.readmePath || 'README.md',
       branch: system.branch || 'main',
     });
+
     setFormError('');
     setShowForm(true);
   }
 
+  // CLOSE FORM
   function closeForm() {
+    if (submitting) return;
+
     setShowForm(false);
     setEditingId(null);
+    setForm({ ...emptyProject });
     setFormError('');
   }
 
+  // HANDLE INPUT CHANGES
   function handleChange(event) {
     const { name, value } = event.target;
 
@@ -159,21 +213,26 @@ export default function MySystems() {
     }));
   }
 
-  function handleSubmit(event) {
+  // CREATE TOOL USING SPRING BOOT API
+  async function handleSubmit(event) {
     event.preventDefault();
     setFormError('');
 
     const name = form.name.trim();
     const description = form.description.trim();
+    const language = form.language.trim();
+    const github = form.github.trim();
 
-    if (!name || !description || !form.language.trim()) {
-      setFormError('Please complete all required fields.');
+    if (!name || !description || !language) {
+      setFormError(
+        'Please complete all required fields.'
+      );
       return;
     }
 
     if (
-      form.github.trim() &&
-      !getGitHubRepository(form.github.trim())
+      github &&
+      !getGitHubRepository(github)
     ) {
       setFormError(
         'Enter a valid GitHub repository URL, such as https://github.com/owner/repository.'
@@ -181,30 +240,76 @@ export default function MySystems() {
       return;
     }
 
-    const project = {
-      ...form,
-      id: editingId ?? Date.now(),
-      name,
-      description,
-      language: form.language.trim(),
-      github: form.github.trim().replace(/\/+$/, ''),
-      readmePath: form.readmePath.trim() || 'README.md',
-      branch: form.branch.trim() || 'main',
-    };
-
+    // Editing is not connected to a backend endpoint yet.
     if (editingId !== null) {
-      setSystems((current) =>
-        current.map((item) =>
-          item.id === editingId ? project : item
-        )
+      setFormError(
+        'Editing is not connected to the backend yet.'
       );
-    } else {
-      setSystems((current) => [project, ...current]);
+      return;
     }
 
-    closeForm();
+    setSubmitting(true);
+
+    try {
+      const {
+        data: { session },
+        error,
+      } = await supabase.auth.getSession();
+
+      if (error) throw error;
+
+      const user = session?.user;
+
+      if (!user?.id) {
+        throw new Error(
+          'Please sign in before adding a project.'
+        );
+      }
+
+      const payload = {
+        name,
+        description,
+        category: form.category,
+        type: form.category,
+        language,
+        author:
+          user.user_metadata?.full_name ||
+          user.user_metadata?.name ||
+          user.email ||
+          'User',
+        date: new Date().toISOString().slice(0, 10),
+        technologies: [],
+        demo: '',
+        github: github.replace(/\/+$/, ''),
+        userId: user.id,
+      };
+
+      const createdTool = await createTool(payload);
+
+      // Add the saved response to the UI.
+      setSystems((current) => [
+        mapToolToSystem({
+          ...createdTool,
+          icon: form.icon,
+          readmePath:
+            form.readmePath.trim() || 'README.md',
+          branch: form.branch.trim() || 'main',
+        }),
+        ...current,
+      ]);
+
+      closeForm();
+    } catch (error) {
+      setFormError(
+        error.message ||
+          'Failed to create project. Please try again.'
+      );
+    } finally {
+      setSubmitting(false);
+    }
   }
 
+  // DELETE UI ITEM ONLY — BACKEND DELETE NOT CONNECTED
   function deleteProject(system) {
     const confirmed = window.confirm(
       `Are you sure you want to delete "${system.name}"?`
@@ -212,13 +317,16 @@ export default function MySystems() {
 
     if (!confirmed) return;
 
-    setSystems((current) =>
-      current.filter((item) => item.id !== system.id)
+    setPageError(
+      'Delete is not connected to the backend yet. No record was deleted.'
     );
   }
 
+  // OPEN PROJECT GUIDE
   function openProjectGuide(system) {
-    const repository = getGitHubRepository(system.github || '');
+    const repository = getGitHubRepository(
+      system.github || ''
+    );
 
     if (!repository) {
       window.alert(
@@ -227,14 +335,27 @@ export default function MySystems() {
       return;
     }
 
-    const url = new URL('/user/project-guide', window.location.origin);
+    const url = new URL(
+      '/user/project-guide',
+      window.location.origin
+    );
 
     url.searchParams.set('owner', repository.owner);
     url.searchParams.set('repo', repository.repo);
-    url.searchParams.set('path', system.readmePath || 'README.md');
-    url.searchParams.set('branch', system.branch || 'main');
+    url.searchParams.set(
+      'path',
+      system.readmePath || 'README.md'
+    );
+    url.searchParams.set(
+      'branch',
+      system.branch || 'main'
+    );
 
-    window.open(url.toString(), '_blank', 'noopener,noreferrer');
+    window.open(
+      url.toString(),
+      '_blank',
+      'noopener,noreferrer'
+    );
   }
 
   return (
@@ -243,8 +364,8 @@ export default function MySystems() {
         <div>
           <h1>My Systems</h1>
           <p>
-            Explore and manage your web apps, desktop applications,
-            tools, and libraries.
+            Explore and manage your web apps, desktop
+            applications, tools, and libraries.
           </p>
         </div>
 
@@ -261,11 +382,14 @@ export default function MySystems() {
       <div className="systems-toolbar">
         <div className="page-search">
           <Search size={19} />
+
           <input
             type="search"
             placeholder="Search systems..."
             value={search}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) =>
+              setSearch(event.target.value)
+            }
           />
         </div>
 
@@ -286,95 +410,129 @@ export default function MySystems() {
       </div>
 
       <p className="systems-result-count">
-        Showing {filteredSystems.length} of {systems.length} projects
+        Showing {filteredSystems.length} of{' '}
+        {systems.length} projects
       </p>
 
-      <div className="page-system-grid">
-        {filteredSystems.map((system) => {
-          const Icon = iconOptions[system.icon] || Code2;
+      {pageError && (
+        <p className="project-form-error" role="alert">
+          {pageError}
+        </p>
+      )}
 
-          return (
-            <article className="page-system-card" key={system.id}>
-              <div className="project-card-top">
-                <div className="page-system-icon">
-                  <Icon size={25} />
-                </div>
-
-                <div className="project-card-actions">
-                  <button
-                    type="button"
-                    className="icon-action"
-                    title={`Edit ${system.name}`}
-                    aria-label={`Edit ${system.name}`}
-                    onClick={() => openEditForm(system)}
-                  >
-                    <Pencil size={17} />
-                  </button>
-
-                  <button
-                    type="button"
-                    className="icon-action delete-action"
-                    title={`Delete ${system.name}`}
-                    aria-label={`Delete ${system.name}`}
-                    onClick={() => deleteProject(system)}
-                  >
-                    <Trash2 size={17} />
-                  </button>
-                </div>
-              </div>
-
-              <span className="page-system-category">
-                {system.category}
-              </span>
-
-              <h2>{system.name}</h2>
-              <p>{system.description}</p>
-
-              <div className="project-tags">
-                <span>{system.language}</span>
-              </div>
-
-              <div className="project-card-buttons">
-                <button
-                  type="button"
-                  className="guide-button"
-                  onClick={() => openProjectGuide(system)}
-                >
-                  <BookOpenText size={17} />
-                  Project Guide
-                </button>
-
-                {system.github && (
-                  <a
-                    className="project-github-link"
-                    href={system.github}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Open ${system.name} on GitHub`}
-                    title="Open GitHub repository"
-                  >
-                    <ExternalLink size={17} />
-                  </a>
-                )}
-              </div>
-            </article>
-          );
-        })}
-      </div>
-
-      {filteredSystems.length === 0 && (
+      {loading && (
         <div className="page-empty-state">
-          <Search size={32} />
-          <h2>No systems found</h2>
-          <p>Try another search term or category.</p>
+          <p>Loading your systems...</p>
         </div>
+      )}
+
+      {!loading && (
+        <>
+          <div className="page-system-grid">
+            {filteredSystems.map((system) => {
+              const Icon =
+                iconOptions[system.icon] || Code2;
+
+              return (
+                <article
+                  className="page-system-card"
+                  key={system.id}
+                >
+                  <div className="project-card-top">
+                    <div className="page-system-icon">
+                      <Icon size={25} />
+                    </div>
+
+                    <div className="project-card-actions">
+                      <button
+                        type="button"
+                        className="icon-action"
+                        title={`Edit ${system.name}`}
+                        aria-label={`Edit ${system.name}`}
+                        onClick={() =>
+                          openEditForm(system)
+                        }
+                      >
+                        <Pencil size={17} />
+                      </button>
+
+                      <button
+                        type="button"
+                        className="icon-action delete-action"
+                        title={`Delete ${system.name}`}
+                        aria-label={`Delete ${system.name}`}
+                        onClick={() =>
+                          deleteProject(system)
+                        }
+                      >
+                        <Trash2 size={17} />
+                      </button>
+                    </div>
+                  </div>
+
+                  <span className="page-system-category">
+                    {system.category}
+                  </span>
+
+                  <h2>{system.name}</h2>
+
+                  <p>{system.description}</p>
+
+                  <div className="project-tags">
+                    <span>{system.language}</span>
+                  </div>
+
+                  <div className="project-card-buttons">
+                    <button
+                      type="button"
+                      className="guide-button"
+                      onClick={() =>
+                        openProjectGuide(system)
+                      }
+                    >
+                      <BookOpenText size={17} />
+                      Project Guide
+                    </button>
+
+                    {system.github && (
+                      <a
+                        className="project-github-link"
+                        href={system.github}
+                        target="_blank"
+                        rel="noreferrer"
+                        aria-label={`Open ${system.name} on GitHub`}
+                        title="Open GitHub repository"
+                      >
+                        <ExternalLink size={17} />
+                      </a>
+                    )}
+                  </div>
+                </article>
+              );
+            })}
+          </div>
+
+          {filteredSystems.length === 0 && (
+            <div className="page-empty-state">
+              <Search size={32} />
+              <h2>No systems found</h2>
+              <p>
+                Try another search term or category.
+              </p>
+            </div>
+          )}
+        </>
       )}
 
       {showForm && (
         <div
           className="project-modal-backdrop"
           onMouseDown={(event) => {
-            if (event.target === event.currentTarget) closeForm();
+            if (
+              event.target === event.currentTarget
+            ) {
+              closeForm();
+            }
           }}
         >
           <section
@@ -386,10 +544,14 @@ export default function MySystems() {
             <div className="project-modal-header">
               <div>
                 <h2 id="project-form-title">
-                  {editingId !== null ? 'Edit Project' : 'Create Project'}
+                  {editingId !== null
+                    ? 'Edit Project'
+                    : 'Create Project'}
                 </h2>
+
                 <p>
-                  Enter your project details and GitHub documentation.
+                  Enter your project details and GitHub
+                  documentation.
                 </p>
               </div>
 
@@ -398,12 +560,16 @@ export default function MySystems() {
                 className="icon-action"
                 onClick={closeForm}
                 aria-label="Close form"
+                disabled={submitting}
               >
                 <X size={20} />
               </button>
             </div>
 
-            <form className="project-form" onSubmit={handleSubmit}>
+            <form
+              className="project-form"
+              onSubmit={handleSubmit}
+            >
               <label className="form-field">
                 Project Name *
                 <input
@@ -438,11 +604,16 @@ export default function MySystems() {
                     onChange={handleChange}
                     required
                   >
-                    {categories.filter((item) => item !== 'All').map((item) => (
-                      <option key={item} value={item}>
-                        {item}
-                      </option>
-                    ))}
+                    {categories
+                      .filter((item) => item !== 'All')
+                      .map((item) => (
+                        <option
+                          key={item}
+                          value={item}
+                        >
+                          {item}
+                        </option>
+                      ))}
                   </select>
                 </label>
 
@@ -466,11 +637,16 @@ export default function MySystems() {
                   value={form.icon}
                   onChange={handleChange}
                 >
-                  {Object.keys(iconOptions).map((item) => (
-                    <option key={item} value={item}>
-                      {item}
-                    </option>
-                  ))}
+                  {Object.keys(iconOptions).map(
+                    (item) => (
+                      <option
+                        key={item}
+                        value={item}
+                      >
+                        {item}
+                      </option>
+                    )
+                  )}
                 </select>
               </label>
 
@@ -508,7 +684,10 @@ export default function MySystems() {
               </div>
 
               {formError && (
-                <p className="project-form-error" role="alert">
+                <p
+                  className="project-form-error"
+                  role="alert"
+                >
                   {formError}
                 </p>
               )}
@@ -518,13 +697,23 @@ export default function MySystems() {
                   type="button"
                   className="filter-button"
                   onClick={closeForm}
+                  disabled={submitting}
                 >
                   Cancel
                 </button>
 
-                <button type="submit" className="page-primary-button">
+                <button
+                  type="submit"
+                  className="page-primary-button"
+                  disabled={submitting}
+                >
                   <Save size={17} />
-                  {editingId !== null ? 'Save Changes' : 'Create Project'}
+
+                  {submitting
+                    ? 'Saving...'
+                    : editingId !== null
+                      ? 'Save Changes'
+                      : 'Create Project'}
                 </button>
               </div>
             </form>

@@ -1,5 +1,5 @@
 export async function toolService(){
-    const response = await fetch('http://localhost:8080/api/test/tools');
+    const response = await fetch('http://localhost:8080/api/tools/all');
     const data = await response.json();
 
     return data;

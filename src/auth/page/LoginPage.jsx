@@ -73,10 +73,6 @@ export default function LoginPage() {
 
           {error && <p className="login-error" role="alert">{error}</p>}
 
-          <div className="login-options">
-            <Link to="/forgot-password">Forgot password?</Link>
-          </div>
-
           <button type="submit" className="login-submit">
             Send <span aria-hidden="true">→</span>
           </button>
