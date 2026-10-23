@@ -1,7 +1,7 @@
 
 import { supabase } from './SupabaseService';
 
-const API_URL = 'http://localhost:8080/api/tools';
+const API_URL = 'http://localhost:8080/api';
 
 async function apiRequest(path = '', options = {}) {
   const {
@@ -24,7 +24,7 @@ async function apiRequest(path = '', options = {}) {
   let response;
 
   try {
-    response = await fetch(`${API_URL}${path}`, {
+    response = await fetch(`${API_URL/"tools"}${path}`, {
       ...options,
       headers: {
         Accept: 'application/json',
@@ -35,7 +35,7 @@ async function apiRequest(path = '', options = {}) {
     });
   } catch (error) {
     throw new Error(
-      `Cannot connect to backend at ${API_URL}. Make sure Spring Boot is running.`,
+      `Cannot connect to backend at ${API_URL/"tools"}. Make sure Spring Boot is running.`,
       { cause: error }
     );
   }
