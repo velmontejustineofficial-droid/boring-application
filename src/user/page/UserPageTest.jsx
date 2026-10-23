@@ -1,4 +1,6 @@
 
+import { useState } from 'react';
+
 import {
   ArrowRight,
   Bell,
@@ -8,12 +10,14 @@ import {
   Construction,
   FolderKanban,
   LayoutDashboard,
+  LogOut,
   Settings,
   UserRound,
   Wrench,
 } from 'lucide-react';
 
-import { Link } from 'react-router';
+import { Link, useNavigate } from 'react-router';
+import { logoutSupabase } from '../../app/service/SupabaseService';
 
 import './css/UserPageTest.css';
 
@@ -63,6 +67,27 @@ const developmentItems = [
 ];
 
 export default function UserPageTest() {
+  const navigate = useNavigate();
+  const [loggingOut, setLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState('');
+
+  const handleLogout = async () => {
+    if (loggingOut) return;
+
+    setLoggingOut(true);
+    setLogoutError('');
+
+    try {
+      await logoutSupabase();
+      navigate('/home', { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      setLogoutError(error?.message || 'Unable to log out. Please try again.');
+    } finally {
+      setLoggingOut(false);
+    }
+  };
+
   return (
     <main className="user-test-page">
       {/* HEADER */}
@@ -92,11 +117,27 @@ export default function UserPageTest() {
           <div className="user-test-avatar" aria-label="User profile">
             <UserRound size={19} />
           </div>
+
+          <button
+            type="button"
+            className="user-test-logout-button"
+            onClick={handleLogout}
+            disabled={loggingOut}
+          >
+            <LogOut size={17} />
+            <span>{loggingOut ? 'Logging out...' : 'Logout'}</span>
+          </button>
         </div>
       </header>
 
       {/* MAIN CONTENT */}
       <div className="user-test-content">
+        {logoutError && (
+          <div className="user-test-logout-error" role="alert">
+            {logoutError}
+          </div>
+        )}
+
         <div className="user-test-breadcrumb">
           <LayoutDashboard size={15} />
           <span>Dashboard</span>
