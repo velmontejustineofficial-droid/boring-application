@@ -8,7 +8,6 @@ const ToolsTestPage = lazy(()=> import("./user/TestPage"));
 const VisitorsLayout = lazy(() => import("./app/layout/VisitorsLayout"));
 const AdminLayout = lazy(() => import("./app/layout/AdminLayout"));
 const UserLayout = lazy(() => import("./app/layout/UserLayout"));
-const AuthLayout = lazy(() => import("./app/layout/AuthLayout"));
 
 // General pages
 const NotFoundPage = lazy(() => import("./app/pages/NotFoundPage"));
@@ -89,12 +88,6 @@ const ProjectGuide = lazy(() =>
   }))
 );
 
-// Auth pages
-const LoginPage = lazy(() =>
-  import("./app/pages/AuthPage").then((module) => ({
-    default: module.LoginPage,
-  }))
-);
 
 function PageLoading() {
   return (
@@ -109,17 +102,9 @@ export default function App() {
   return (
     <Suspense fallback={<PageLoading />}>
       <Routes>
+
         <Route path="/" element={<VisitorsLayout />}>
           <Route index element={<Navigate to="/user" replace />} />
-        </Route>
-
-        <Route path="/auth" element={<AuthLayout />}>
-          <Route index element={<Navigate to="login" replace />} />
-          <Route path="login" element={<LoginPage />} />
-        </Route>
-
-        <Route path="/visitors" element={<VisitorsLayout />}>
-          <Route index element={<Navigate to="home" replace />} />
 
           <Route path="home" element={<HomePage />} />
           <Route path="about" element={<AboutPage />} />

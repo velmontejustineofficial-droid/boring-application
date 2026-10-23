@@ -4,7 +4,7 @@ import { NavLink } from 'react-router';
 export default function VisitorsHeader({ title, logo}) {
   return (
     <header className='vistors-header'>
-        <NavLink to="/visitors" className='vistors-logo'>
+        <NavLink to="/" className='vistors-logo'>
             <img src={logo} alt="" />
             <h1>{title}</h1>
         </NavLink>

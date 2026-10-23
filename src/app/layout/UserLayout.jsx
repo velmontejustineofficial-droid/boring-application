@@ -63,7 +63,7 @@ export default function UserLayout() {
   }
 
   if (!session) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/home" replace />;
   }
 
   return (
