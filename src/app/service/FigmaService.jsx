@@ -1,11 +1,16 @@
-
 import { supabase } from "./SupabaseService";
+
+const getRedirectURL = () => {
+  const baseURL = import.meta.env.VITE_SITE_URL || window.location.origin;
+
+  return `${baseURL.replace(/\/+$/, "")}/user`;
+};
 
 export async function loginWithFigma() {
   const { data, error } = await supabase.auth.signInWithOAuth({
-    provider: 'figma',
+    provider: "figma",
     options: {
-      redirectTo: `${window.location.origin}/user`,
+      redirectTo: getRedirectURL(),
     },
   });
 

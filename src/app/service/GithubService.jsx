@@ -1,17 +1,22 @@
-
 import { supabase } from "./SupabaseService";
+
+const getRedirectURL = () => {
+  const baseURL = import.meta.env.VITE_SITE_URL || window.location.origin;
+
+  return `${baseURL.replace(/\/+$/, "")}/user`;
+};
 
 export async function loginWithGithub() {
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "github",
     options: {
-      redirectTo: `${window.location.origin}/user`,
+      redirectTo: getRedirectURL(),
     },
   });
 
   if (error) {
     throw error;
   }
-  
+
   return data;
 }
