@@ -56,6 +56,7 @@ export default function UserProfile() {
           <div className="profile-email">
             <Mail size={17} />
             <span>{user.email}</span>
+            <p>{user.token}</p>
           </div>
         </aside>
 

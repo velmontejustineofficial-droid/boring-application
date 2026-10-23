@@ -1,16 +1,15 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { Mail, Lock, Eye, EyeOff } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { FiGithub } from 'react-icons/fi';
+
+import { loginWithGithub } from '../../app/service/GithubService';
 
 import './css/LoginPage.css';
 
-export default function LoginPage({login}) {
-
-  const [showPassword, setShowPassword] = useState(false);
+export default function LoginPage() {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
   async function handleSubmit(event) {
@@ -18,10 +17,10 @@ export default function LoginPage({login}) {
     setError('');
 
     try {
-      // This expects login() to be connected to your
-      // actual authentication service.
-      await login({ email, password });
-      
+      console.log(event);
+      await loginWithGithub();
+
+    
     } catch (err) {
       setError(err.message || 'Unable to sign in. Please try again.');
     }
@@ -52,27 +51,6 @@ export default function LoginPage({login}) {
             />
           </label>
 
-          <label className="login-input">
-            <Lock size={19} />
-            <input
-              type={showPassword ? 'text' : 'password'}
-              placeholder="Password"
-              aria-label="Password"
-              autoComplete="current-password"
-              value={password}
-              onChange={(event) => setPassword(event.target.value)}
-              required
-            />
-            <button
-              type="button"
-              className="password-toggle"
-              onClick={() => setShowPassword((previous) => !previous)}
-              aria-label={showPassword ? 'Hide password' : 'Show password'}
-            >
-              {showPassword ? <EyeOff size={19} /> : <Eye size={19} />}
-            </button>
-          </label>
-
           {error && <p className="login-error" role="alert">{error}</p>}
 
           <div className="login-options">
@@ -80,7 +58,7 @@ export default function LoginPage({login}) {
           </div>
 
           <button type="submit" className="login-submit">
-            Sign In <span aria-hidden="true">→</span>
+            Send <span aria-hidden="true">→</span>
           </button>
 
           <Link to="/visitors" className="visitor-button">

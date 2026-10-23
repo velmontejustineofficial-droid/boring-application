@@ -2,8 +2,6 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router";
 
-import useAuth from "./app/service/AuthSevice";
-
 // Layouts
 const VisitorsLayout = lazy(() => import("./app/layout/VisitorsLayout"));
 const AdminLayout = lazy(() => import("./app/layout/AdminLayout"));
@@ -105,7 +103,6 @@ function PageLoading() {
 }
 
 export default function App() {
-  const { login } = useAuth();
 
   return (
     <Suspense fallback={<PageLoading />}>
@@ -116,7 +113,7 @@ export default function App() {
 
         <Route path="/auth" element={<AuthLayout />}>
           <Route index element={<Navigate to="login" replace />} />
-          <Route path="login" element={<LoginPage login={login} />} />
+          <Route path="login" element={<LoginPage />} />
         </Route>
 
         <Route path="/visitors" element={<VisitorsLayout />}>

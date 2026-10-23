@@ -12,7 +12,7 @@ export async function loginWithGithub() {
   if (error) {
     throw error;
   }
-
+  
   return data;
 }
 
