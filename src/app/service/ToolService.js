@@ -1,7 +1,7 @@
 
 import { supabase } from './SupabaseService';
 
-const API_URL = 'http://localhost:8080/api';
+const API_URL = 'http://localhost:8080/api/tools';
 
 async function apiRequest(path = '', options = {}) {
   const {
@@ -85,4 +85,22 @@ export function createTool(tool) {
     method: 'POST',
     body: JSON.stringify(tool),
   });
+}
+
+export function deleteTool(id) {
+  if (id == null) {
+    throw new Error('Tool ID is required.');
+  }
+
+  return apiRequest(`/${encodeURIComponent(id)}`, {
+    method: 'DELETE',
+  });
+}
+
+export function getAllTools() {
+  return apiRequest('');
+}
+
+export function getToolById(id) {
+  return apiRequest(`/${encodeURIComponent(id)}`);
 }
