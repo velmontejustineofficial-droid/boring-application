@@ -2,6 +2,8 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router";
 
+const ToolsTestPage = lazy(()=> import("./user/TestPage"));
+
 // Layouts
 const VisitorsLayout = lazy(() => import("./app/layout/VisitorsLayout"));
 const AdminLayout = lazy(() => import("./app/layout/AdminLayout"));
@@ -144,6 +146,8 @@ export default function App() {
         <Route path="/services" element={<ServicesPage />} />
 
         <Route path="*" element={<NotFoundPage />} />
+
+        <Route path="test" element={<ToolsTestPage/>}/>
       </Routes>
     </Suspense>
   );
