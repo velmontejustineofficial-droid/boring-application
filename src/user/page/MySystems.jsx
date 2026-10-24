@@ -1,21 +1,7 @@
 
 import { useEffect, useState } from 'react';
-import {
-  Search,
-  Mail,
-  BookOpen,
-  Monitor,
-  Globe,
-  Code2,
-  FileCode,
-  ExternalLink,
-  BookOpenText,
-  Plus,
-  Pencil,
-  Trash2,
-  X,
-  Save,
-} from 'lucide-react';
+import { Search, Mail, BookOpen, Monitor, Globe, Code2, FileCode, ExternalLink,
+  BookOpenText, Plus, Pencil, Trash2, X, Save, } from 'lucide-react';
 
 import { supabase } from '../../app/service/SupabaseService';
 import { createTool, getAllToolsByUserId } from '../service/ToolService';
@@ -329,8 +315,7 @@ export default function MySystems() {
     );
 
     if (!repository) {
-      window.alert(
-        'Add a valid GitHub repository URL to this project first.'
+      window.alert('Add a valid GitHub repository URL to this project first.'
       );
       return;
     }

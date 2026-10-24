@@ -120,3 +120,7 @@ Follow the installation instructions for each project.
 ## 👨‍💻 Developer
 
 Created as a software project showcase.
+
+
+## run localhost
+just type in terminal `npm run dev`
