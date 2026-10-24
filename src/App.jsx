@@ -119,7 +119,7 @@ export default function App() {
 
           <Route path="dashboard" element={isLocalhost ? <UserDashboard /> : null} />
           <Route path="systems" element={isLocalhost ?<MySystems /> : null} />
-          <Route path="profile" element={isLocalhost ?<UserProfile /> : null} />
+          <Route path="profile" element={<UserProfile />} />
           <Route path="settings" element={isLocalhost ?<UserSettings /> : null} />
           <Route path="project-guide" element={isLocalhost ?<ProjectGuide />: null} />
         </Route>
