@@ -1,19 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
-import { toolService, categoryService } from "../service/ToolsService";
+import { toolService } from "../service/ToolsService";
 
 
-function useInitializeCategory(){
-    const [category, setCategory] = useState([]);
-
-    useEffect(() => {
-        async function fetchCategory() {
-            const categoryData = await categoryService();
-            setCategory(categoryData)
-        }
-        fetchCategory();
-    }, []);
-    return category;
-}
 
 function useInitializetools(){
     const [tools, setTools] = useState([]);
@@ -34,7 +22,6 @@ export function useToolsHooks() {
     const[activeCategory, setActiveCategory] = useState('All Tools');
 
     const allTools = useInitializetools();
-    const allCategory = useInitializeCategory();
     
     const filteredTools = useMemo(() => {
         return allTools.filter((tool) => {
@@ -49,6 +36,29 @@ export function useToolsHooks() {
             return matchesSearch && matchesCategory;
         });
     }, [allTools, search, activeCategory]);
+
+    const allCategory = [
+        'All Tools',
+        'Web App',
+        'Desktop App',
+        'Mobile App',
+        'Developer Tools',
+        'Libraries',
+        'APIs',
+        'CLI Tools',
+        'Games',
+        'AI & Machine Learning',
+        'Open Source',
+        'UI Components',
+        'Templates',
+        'Extensions',
+        'Automation Tools',
+        'Database Tools',
+        'Security Tools',
+        'Productivity Tools',
+        'Educational Tools',
+        'Other',
+    ];
     
 
     return {filteredTools, setSearch, search,  setActiveCategory, activeCategory, allCategory};

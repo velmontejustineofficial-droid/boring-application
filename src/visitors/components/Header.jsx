@@ -1,5 +1,5 @@
 
-import { Search, SlidersHorizontal, FolderOpen } from 'lucide-react';
+import { Search, FolderOpen } from 'lucide-react';
 import './Header.css';
 
 export default function Header({
@@ -9,8 +9,6 @@ export default function Header({
 
   searchTerm = '',
   onSearchChange,
-  itemsPerPage = 6,
-  onItemsPerPageChange,
 }) {
     
   return (
@@ -51,28 +49,6 @@ export default function Header({
               </option>
             ))}
           </select>
-        </div>
-
-        {/* Items per page */}
-        <div className="tools-filter">
-          <SlidersHorizontal size={18} />
-
-        <select
-        value={itemsPerPage}
-        onChange={(e) =>
-            onItemsPerPageChange?.(Number(e.target.value))
-        }
-        aria-label="Number of tools per page"
-        >
-        {['6 Per Page', '12 Per Page', '18 Per Page', '24 Per Page'].map((page) => {
-            const value = Number.parseInt(page, 10);
-            return (
-            <option key={value} value={value}>
-                {page}
-            </option>
-            );
-        })}
-        </select>
         </div>
       </div>
     </header>

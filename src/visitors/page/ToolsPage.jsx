@@ -1,7 +1,4 @@
-import { useState } from 'react';
-
 import Header from '../components/Header';
-import Pagination from '../components/Pagination.jsx';
 
 import EmptyToolCard from '../components/tools/EmptyToolCard.jsx';
 import ToolCard from '../components/tools/ToolCard.jsx';
@@ -13,38 +10,15 @@ import './css/ToolsPage.css';
 
 export default function ToolsPage() {
   const { allCategory, filteredTools, setSearch, search, activeCategory, setActiveCategory } = useToolsHooks();
-  
-  const [currentPage, setCurrentPage] = useState(1);
-  const [itemsPerPage, setItemsPerPage] = useState(6);
-
-
-  const totalPages = Math.ceil(filteredTools.length / itemsPerPage);
-  const safeCurrentPage = Math.min(
-    currentPage,
-    Math.max(totalPages, 1)
-  );
-
-  const startIndex = (safeCurrentPage - 1) * itemsPerPage;
-  const currentTools = filteredTools.slice(
-    startIndex,
-    startIndex + itemsPerPage
-  );
 
   // Handlers
   const handleSearchChange = (value) => {
     setSearch(value);
-    setCurrentPage(1);
   };
 
   const handleCategoryChange = (value) =>{
     setActiveCategory(value);
-    setCurrentPage(1);
   }
-
-  const handleItemsPerPageChange = (value) => {
-    setItemsPerPage(value);
-    setCurrentPage(1);
-  };
 
   return (
     <main className="tools-page">
@@ -55,9 +29,6 @@ export default function ToolsPage() {
 
         searchTerm={search}
         onSearchChange={handleSearchChange}
-
-        itemsPerPage={itemsPerPage}
-        onItemsPerPageChange={handleItemsPerPageChange}
       />
 
       <section className="tools-results">
@@ -79,18 +50,6 @@ export default function ToolsPage() {
                 />
               ))}
             </div>
-
-            <Pagination
-              currentPage={safeCurrentPage}
-              totalPages={totalPages}
-              onPageChange={setCurrentPage}
-            />
-
-            <p className="tools-pagination-info">
-              Showing {startIndex + 1}–
-              {Math.min(startIndex + currentTools.length, filteredTools.length)}{' '}
-              of {filteredTools.length} tools
-            </p>
           </>
         ) : (
           <EmptyToolCard

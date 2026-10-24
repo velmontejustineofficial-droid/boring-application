@@ -180,7 +180,7 @@ export default function AboutPage() {
           </p>
         </div>
 
-        <NavLink to="/visitors/projects" className="about-primary-button">
+        <NavLink to="/tools" className="about-primary-button">
           Explore Systems
           <ArrowRight size={18} />
         </NavLink>
