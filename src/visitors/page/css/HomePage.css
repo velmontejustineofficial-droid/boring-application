@@ -270,201 +270,63 @@
   color: var(--text-muted);
 }
 
-.home-login-submit,
-.home-social-button,
-.home-visitor-button {
+.home-social-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+.home-social-button {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
+  gap: 12px;
   width: 100%;
-  min-height: 48px;
-  padding: 12px 16px;
+  min-height: 52px;
+  padding: 14px 18px;
+  border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
+  background: var(--bg-main);
+  color: var(--text-main);
   font: inherit;
-  font-size: 0.9rem;
+  font-size: 0.92rem;
   font-weight: 700;
+  cursor: pointer;
   transition:
-    transform var(--transition-fast),
+    background var(--transition-fast),
     border-color var(--transition-fast),
-    background var(--transition-fast);
+    transform var(--transition-fast);
 }
 
-.home-login-submit {
-  margin-top: 4px;
-  border: none;
-  background: var(--gradient-app-title);
-  color: var(--text-accent);
-}
-
-.home-login-submit:hover {
+.home-social-button:hover:not(:disabled) {
+  border-color: var(--color-accent);
+  background: var(--color-accent-light);
   transform: translateY(-1px);
 }
 
-.home-login-divider {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin: 26px 0 20px;
+.home-social-button:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
 }
 
-.home-login-divider span {
-  flex: 1;
-  height: 1px;
-  background: var(--border-color);
+.login-spinner {
+  flex-shrink: 0;
+  animation: login-spin 0.8s linear infinite;
 }
 
-.home-login-divider p {
-  margin: 0;
-  color: var(--text-secondary);
-  font-size: 0.8rem;
-  white-space: nowrap;
-}
-
-.home-social-buttons {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.home-social-button,
-.home-visitor-button {
-  border: 1px solid var(--border-color);
-  background: var(--bg-main);
-  color: var(--text-main);
-}
-
-.home-social-button:hover,
-.home-visitor-button:hover {
-  border-color: var(--color-accent);
-  background: var(--color-accent-light);
-}
-
-.home-login-bottom {
-  margin-top: 30px;
-  padding-top: 24px;
-  border-top: 1px solid var(--border-color);
-  text-align: center;
-}
-
-.home-login-bottom p {
-  margin: 0 0 13px;
-  color: var(--text-secondary);
-  font-size: 0.85rem;
-}
-
-.home-visitor-button {
-  min-height: 44px;
-}
-
-.home-login-terms {
-  margin: 24px 0 0;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  line-height: 1.7;
-  text-align: center;
-}
-
-.home-login-error {
-  margin: 0;
-  color: var(--color-error);
-  font-size: 0.83rem;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-/* TABLET */
-
-@media (max-width: 1050px) {
-  .home-page {
-    grid-template-columns: minmax(0, 1fr) minmax(320px, 0.85fr);
-  }
-
-  .home-hero {
-    padding: 34px;
-  }
-
-  .home-hero-content h1 {
-    font-size: clamp(2.2rem, 4.5vw, 3.5rem);
-    letter-spacing: -1.7px;
-  }
-
-  .home-feature-list {
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin-top: 34px;
-  }
-
-  .home-feature {
-    flex-direction: row;
-    align-items: center;
-    gap: 12px;
-  }
-
-  .home-feature-icon {
-    flex-shrink: 0;
-  }
-}
-
-/* MOBILE */
-
-@media (max-width: 760px) {
-  .home-page {
-    grid-template-columns: minmax(0, 1fr);
-  }
-
-  .home-hero {
-    gap: 38px;
-    padding: 28px 22px 38px;
-  }
-
-  .home-hero-content h1 {
-    font-size: clamp(2.2rem, 8vw, 3.5rem);
-  }
-
-  .home-description {
-    font-size: 0.92rem;
-  }
-
-  .home-feature-list {
-    grid-template-columns: 1fr;
-    margin-top: 32px;
-  }
-
-  .home-login-section {
-    padding: 44px 22px;
-    border-top: 1px solid var(--border-color);
-    border-left: none;
-  }
-
-  .home-login-card {
-    max-width: 480px;
-  }
-
-  .home-footer {
-    margin-top: 0;
-  }
-}
-
-@media (max-width: 380px) {
-  .home-hero {
-    padding-inline: 17px;
-  }
-
-  .home-login-section {
-    padding-inline: 17px;
-  }
-
-  .home-social-buttons {
-    grid-template-columns: 1fr;
+@keyframes login-spin {
+  to {
+    transform: rotate(360deg);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .home-explore-button,
-  .home-login-submit,
-  .home-social-button,
-  .home-visitor-button {
+  .login-spinner {
+    animation: none;
+  }
+
+  .home-social-button {
     transition: none;
   }
 }

@@ -1,22 +1,42 @@
 
 import { useState } from 'react';
-import { useOutletContext } from "react-router";
-import { Mail, Save } from 'lucide-react';
-import './css/UserPages.css';
-import { useNavigate } from 'react-router';
+import { useNavigate, useOutletContext } from 'react-router';
+import { Mail, LogOut, UserRound } from 'lucide-react';
+
+import './css/ProfilePage.css';
 import { logoutSupabase } from '../../app/service/SupabaseService';
 
 export default function UserProfile() {
   const { user } = useOutletContext();
   const navigate = useNavigate();
 
+  const metadata = user?.user_metadata ?? {};
 
-  const [profile, setProfile] = useState({
-    name: 'John Doe',
-    email: 'john@example.com',
-    username: 'johndoe',
-    bio: 'Passionate about technology and always exploring new tools and systems.',
-  });
+  const displayName =
+    metadata.full_name ||
+    metadata.name ||
+    metadata.user_name ||
+    metadata.preferred_username ||
+    'User';
+
+  const displayUsername =
+    metadata.preferred_username ||
+    metadata.user_name ||
+    metadata.user_name ||
+    user?.email?.split('@')[0] ||
+    'user';
+
+  const avatarUrl = metadata.avatar_url || metadata.picture || '';
+
+  const [profile, setProfile] = useState(() => ({
+    name: displayName,
+    username: displayUsername,
+    email: user?.email || '',
+    bio: metadata.bio
+  }));
+
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
+  const [logoutError, setLogoutError] = useState('');
 
   function updateField(event) {
     const { name, value } = event.target;
@@ -27,9 +47,19 @@ export default function UserProfile() {
     }));
   }
 
-  function handleSubmit(event) {
-    event.preventDefault();
-    alert('Profile updated in this demo.');
+  async function handleLogout() {
+    setIsLoggingOut(true);
+    setLogoutError('');
+
+    try {
+      await logoutSupabase();
+      navigate('/login', { replace: true });
+    } catch (error) {
+      console.error('Logout failed:', error);
+      setLogoutError(error.message || 'Unable to log out. Please try again.');
+    } finally {
+      setIsLoggingOut(false);
+    }
   }
 
   return (
@@ -37,18 +67,38 @@ export default function UserProfile() {
       <div className="user-page-heading">
         <div>
           <h1>My Profile</h1>
-          <p>Manage your personal information.</p>
+          <p>your personal information and account.</p>
         </div>
       </div>
+
+      {logoutError && (
+        <div className="profile-error" role="alert">
+          {logoutError}
+        </div>
+      )}
 
       <div className="profile-layout">
         <aside className="profile-summary page-panel">
           <div className="profile-avatar">
-            <img src={user.user_metadata.avatar_url} alt="" />
+            {avatarUrl ? (
+              <img
+                src={avatarUrl}
+                alt={`${displayName}'s avatar`}
+                referrerPolicy="no-referrer"
+                onError={(event) => {
+                  event.currentTarget.style.display = 'none';
+                }}
+              />
+            ) : (
+              <UserRound size={42} aria-hidden="true" />
+            )}
           </div>
 
-          <h2>{user.user_metadata.name}</h2>
-          <p className="profile-username">@{user.user_metadata.preferred_username}</p>
+          <h2>{displayName}</h2>
+
+          <p className="profile-username">
+            @{displayUsername}
+          </p>
 
           <span className="profile-role">User</span>
 
@@ -56,33 +106,54 @@ export default function UserProfile() {
 
           <div className="profile-email">
             <Mail size={17} />
-            <span>{user.email}</span>
+            <span>{user?.email || 'No email available'}</span>
+          </div>
+
+          <div className="profile-actions">
+            <button
+              className="profile-logout-button"
+              type="button"
+              onClick={handleLogout}
+              disabled={isLoggingOut}
+            >
+              <LogOut size={16} />
+              {isLoggingOut ? 'Logging out...' : 'Log Out'}
+            </button>
           </div>
         </aside>
 
-        <form className="profile-form page-panel" onSubmit={handleSubmit}>
+        <div
+          className="profile-form page-panel"
+        >
           <h2>Personal Information</h2>
+
           <p className="panel-description">
-            Update your account details below.
+            Update your profile details below.
           </p>
 
           <label className="form-field">
             Full Name
             <input
+              type="text"
               name="name"
               value={profile.name}
               onChange={updateField}
+              autoComplete="name"
               required
+              disabled
             />
           </label>
 
           <label className="form-field">
             Username
             <input
+              type="text"
               name="username"
               value={profile.username}
               onChange={updateField}
+              autoComplete="username"
               required
+              disabled
             />
           </label>
 
@@ -93,34 +164,11 @@ export default function UserProfile() {
               name="email"
               value={profile.email}
               onChange={updateField}
-              required
+              autoComplete="email"
+              disabled
             />
           </label>
-
-          <label className="form-field">
-            About Me
-            <textarea
-              name="bio"
-              rows={4}
-              value={profile.bio}
-              onChange={updateField}
-            />
-          </label>
-
-          <button className="page-primary-button" type="submit">
-            <Save size={17} />
-            Save Changes
-          </button>
-        </form>
-        <a href="/visitors">
-          visit other project
-        </a>
-        <button onClick={
-          async ()=>{
-              await logoutSupabase();
-              navigate('/login', { replace: true });
-          }
-        }>lag out</button>
+        </div>
       </div>
     </section>
   );

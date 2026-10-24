@@ -64,10 +64,10 @@ function CardAuthor({author, date}){
     )
 }
 
-function CardAction({ demo, name, github}){
+function CardAction({ demo, name, github, handleView}){
     return(
         <div className="community-tool-actions">
-            <button type="button" className="tool-details-button" onClick={() => alert("test")}>
+            <button type="button" className="tool-details-button" onClick={handleView}>
                 <Eye size={16} />
                 Details
             </button>
@@ -97,7 +97,7 @@ function CardAction({ demo, name, github}){
     )
 }
 
-export default function ToolCard({category, type, name, description, technologies, author, date, demo, github}){
+export default function ToolCard({category, type, name, description, technologies, author, date, demo, github, handleView}){
     return(
         <article className="community-tool-card">
             <CardHeader
@@ -118,6 +118,7 @@ export default function ToolCard({category, type, name, description, technologie
                 demo={demo}
                 name={name}
                 github={github}
+                handleView={handleView}
             />
         </article>
     )

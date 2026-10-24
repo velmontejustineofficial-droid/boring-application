@@ -1,7 +1,7 @@
 
 import { useState } from 'react';
 import { Link } from 'react-router';
-import { Mail } from 'lucide-react';
+import { LoaderCircle } from 'lucide-react';
 import { FiGithub } from 'react-icons/fi';
 import { SiFigma } from 'react-icons/si';
 
@@ -11,39 +11,39 @@ import { loginWithFigma } from '../../app/service/FigmaService';
 import './css/HomePage.css';
 
 export default function HomePage() {
-  const [email, setEmail] = useState('');
   const [error, setError] = useState('');
+  const [loadingProvider, setLoadingProvider] = useState('');
 
   async function handleGithub() {
+    if (loadingProvider) return;
+
     setError('');
+    setLoadingProvider('github');
 
     try {
       await loginWithGithub();
     } catch (err) {
       setError(err.message || 'GitHub login failed.');
+      setLoadingProvider('');
     }
   }
 
   async function handleFigma() {
+    if (loadingProvider) return;
+
     setError('');
+    setLoadingProvider('figma');
 
     try {
       await loginWithFigma();
     } catch (err) {
       setError(err.message || 'Figma login failed.');
+      setLoadingProvider('');
     }
-  }
-
-  function handleEmail(event) {
-    event.preventDefault();
-    setError(
-      'Email login is not connected yet. Please use GitHub, Figma, or Visitor.'
-    );
   }
 
   return (
     <main className="home-page">
-      {/* LEFT: HERO */}
       <section className="home-hero">
         <Link to="/" className="home-brand">
           <span className="home-brand-logo">JB</span>
@@ -68,11 +68,9 @@ export default function HomePage() {
             applications in one place. Discover useful systems and share
             your own creations with the community.
           </p>
-
         </div>
       </section>
 
-      {/* RIGHT: LOGIN */}
       <section className="home-login-section">
         <div className="home-login-card">
           <div className="home-login-heading">
@@ -80,65 +78,43 @@ export default function HomePage() {
             <p>Sign in to explore and share your projects.</p>
           </div>
 
-          <form className="home-login-form" onSubmit={handleEmail}>
-            <label className="home-email-label" htmlFor="home-email">
-              Email address
-            </label>
-
-            <div className="home-email-input">
-              <Mail size={18} aria-hidden="true" />
-
-              <input
-                id="home-email"
-                type="email"
-                placeholder="you@example.com"
-                autoComplete="email"
-                value={email}
-                onChange={(event) => setEmail(event.target.value)}
-                required
-              />
-            </div>
-
-            {error && (
-              <p className="home-login-error" role="alert">
-                {error}
-              </p>
-            )}
-
-            <button type="submit" className="home-login-submit">
-              Continue with Email <span aria-hidden="true">→</span>
-            </button>
-          </form>
-
-          <div className="home-login-divider">
-            <span />
-            <p>or continue with</p>
-            <span />
-          </div>
-
           <div className="home-social-buttons">
             <button
               type="button"
               className="home-social-button"
               onClick={handleGithub}
+              disabled={Boolean(loadingProvider)}
             >
-              <FiGithub size={19} />
-              GitHub
+              {loadingProvider === 'github' ? (
+                <LoaderCircle className="login-spinner" size={19} />
+              ) : (
+                <FiGithub size={19} />
+              )}
+
+              {loadingProvider === 'github' ? 'Connecting...' : 'Continue with GitHub'}
             </button>
 
             <button
               type="button"
               className="home-social-button"
               onClick={handleFigma}
+              disabled={Boolean(loadingProvider)}
             >
-              <SiFigma size={19} />
-              Figma
+              {loadingProvider === 'figma' ? (
+                <LoaderCircle className="login-spinner" size={19} />
+              ) : (
+                <SiFigma size={19} />
+              )}
+
+              {loadingProvider === 'figma' ? 'Connecting...' : 'Continue with Figma'}
             </button>
           </div>
 
-          <p className="home-login-terms">
-            By continuing, you agree to use the platform responsibly.
-          </p>
+          {error && (
+            <p className="home-login-error" role="alert">
+              {error}
+            </p>
+          )}
         </div>
       </section>
     </main>

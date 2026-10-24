@@ -9,6 +9,11 @@ export default function VisitorsHeader({ title, logo}) {
             <h1>{title}</h1>
         </NavLink>
         <nav className='vistors-navigation'>
+        <NavLink 
+            to="home" 
+            className={({ isActive }) => isActive ? 'active-link': 'none'}>
+            home
+          </NavLink>
           <NavLink 
             to="about" 
             className={({ isActive }) => isActive ? 'active-link': 'none'}>

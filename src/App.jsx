@@ -121,7 +121,6 @@ export default function App() {
           <Route path="systems" element={isLocalhost ?<MySystems /> : null} />
           <Route path="profile" element={<UserProfile />} />
           <Route path="settings" element={isLocalhost ?<UserSettings /> : null} />
-          <Route path="project-guide" element={isLocalhost ?<ProjectGuide />: null} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
@@ -131,6 +130,7 @@ export default function App() {
         <Route path="/contact" element={<ContactPage />} />
         <Route path="/services" element={<ServicesPage />} />
 
+        <Route path="/project-guide" element={isLocalhost ? <ProjectGuide /> : null} />
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </Suspense>
