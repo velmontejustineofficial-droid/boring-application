@@ -1,5 +1,5 @@
 
-import { supabase } from './SupabaseService';
+import { supabase } from '../../app/service/SupabaseService';
 
 const API_URL = 'http://localhost:8080/api/tools';
 

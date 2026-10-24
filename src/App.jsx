@@ -2,8 +2,6 @@
 import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router";
 
-const ToolsTestPage = lazy(()=> import("./user/TestPage"));
-
 // Layouts
 const VisitorsLayout = lazy(() => import("./app/layout/VisitorsLayout"));
 const AdminLayout = lazy(() => import("./app/layout/AdminLayout"));
@@ -98,6 +96,9 @@ function PageLoading() {
 }
 
 export default function App() {
+  const isLocalhost = ['localhost', '127.0.0.1'].includes(
+    window.location.hostname
+  );
 
   return (
     <Suspense fallback={<PageLoading />}>
@@ -116,11 +117,30 @@ export default function App() {
         <Route path="/user" element={<UserLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
 
-          <Route path="dashboard" element={<UserDashboard />} />
-          <Route path="systems" element={<MySystems />} />
-          <Route path="profile" element={<UserProfile />} />
-          <Route path="settings" element={<UserSettings />} />
-          <Route path="project-guide" element={<ProjectGuide />} />
+          <Route
+            path="dashboard"
+            element={<UserDashboard />}
+          />
+
+          <Route
+            path="systems"
+            element={isLocalhost ? <MySystems /> : null}
+          />
+
+          <Route
+            path="profile"
+            element={<UserProfile />}
+          />
+
+          <Route
+            path="settings"
+            element={<UserSettings />}
+          />
+
+          <Route
+            path="project-guide"
+            element={<ProjectGuide />}
+          />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
@@ -131,8 +151,6 @@ export default function App() {
         <Route path="/services" element={<ServicesPage />} />
 
         <Route path="*" element={<NotFoundPage />} />
-
-        <Route path="test" element={<ToolsTestPage/>}/>
       </Routes>
     </Suspense>
   );

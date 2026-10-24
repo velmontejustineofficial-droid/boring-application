@@ -18,7 +18,7 @@ import {
 } from 'lucide-react';
 
 import { supabase } from '../../app/service/SupabaseService';
-import { createTool, getAllToolsByUserId } from '../../app/service/ToolService';
+import { createTool, getAllToolsByUserId } from '../service/ToolService';
 
 import './css/UserPages.css';
 
