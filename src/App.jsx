@@ -117,30 +117,11 @@ export default function App() {
         <Route path="/user" element={<UserLayout />}>
           <Route index element={<Navigate to="dashboard" replace />} />
 
-          <Route
-            path="dashboard"
-            element={<UserDashboard />}
-          />
-
-          <Route
-            path="systems"
-            element={isLocalhost ? <MySystems /> : null}
-          />
-
-          <Route
-            path="profile"
-            element={<UserProfile />}
-          />
-
-          <Route
-            path="settings"
-            element={<UserSettings />}
-          />
-
-          <Route
-            path="project-guide"
-            element={<ProjectGuide />}
-          />
+          <Route path="dashboard" element={isLocalhost ? <UserDashboard /> : null} />
+          <Route path="systems" element={isLocalhost ?<MySystems /> : null} />
+          <Route path="profile" element={isLocalhost ?<UserProfile /> : null} />
+          <Route path="settings" element={isLocalhost ?<UserSettings /> : null} />
+          <Route path="project-guide" element={isLocalhost ?<ProjectGuide />: null} />
         </Route>
 
         <Route path="/admin" element={<AdminLayout />}>
